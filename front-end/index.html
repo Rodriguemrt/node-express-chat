@@ -13,6 +13,7 @@
 		integrity="sha512-N5JbZMETkl+0SZh5l8OA2VxSfF120owfQyy54iAXTJIKuqAn3A9TrNz1ypB55o8aSU5MxaodEgv74wGUvgUynQ=="
 		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script type="text/javascript" src="main.js" defer></script>
+	
 </head>
 
 <body>
@@ -61,34 +62,22 @@
 			</div>
 			<div class="chat-area">
 				<div class="title"><b>Conversation title</b><i class="fa fa-search"></i></div>
-				<div class="chat-list">
-					<ul>
-						<li class="me">
-							<div class="name">
-								<span class="">John Doe</span>
-							</div>
-							<div class="message">
-								<p>Hello</p>
-								<span class="msg-time">5:00 pm</span>
-							</div>
-						</li>
-						<li class="">
-							<div class="name">
-								<span class="">Christian Smith</span>
-							</div>
-							<div class="message">
-								<p>World</p>
-								<span class="msg-time">5:01 pm</span>
-							</div>
-						</li>
+				<div class="chat-list" >
+					<ul id="chat-list">
+						<!--<div class="message">
+							<span class="msg-time">5:01 pm</span>
+						</div> -->
 					</ul>
 				</div>
 				<div class="input-area">
+					<form action="" name="message">
 					<div class="input-wrapper">
-						<input type="text" value="" placeholder="Message here">
-						<i class="fa fa-smile-o"></i>
+							<input type="text" value="" name="inputMessage" placeholder="test here">
+							<i class="fa fa-smile-o"></i>
 					</div>
-					<input type="button" value="Submit" class="send-btn">
+					<input type="button" name="sendChat" value="Submit" class="send-btn">
+				</form>
+					
 				</div>
 			</div>
 			<div class="right-tabs">
@@ -115,6 +104,52 @@
 			</div>
 		</div>
 	</div>
+	<script>
+        const socket = io('http://localhost:3000');
+
+        let chat = document.getElementById('chat-list');
+		let heureChat = document.getElementById('msg-time');
+		console.log(heureChat)
+
+        console.log(document.forms.message)
+
+        document.forms.message.addEventListener('submit', function(e){
+            e.preventDefault();
+            let inputMessage = document.forms.message.inputMessage.value;
+			
+			console.log(console.log(e))
+            socket.emit('chat', {
+                data: inputMessage,
+            })
+        })
+
+        socket.on('notification', function(notif) {
+            console.log(notif);
+        })
+
+        socket.on('chat', function(message,id, time) {
+            console.log(time);
+            let li = document.createElement('li');
+			let nameDiv = document.createElement('div');
+			let messageDiv = document.createElement('div');
+
+			if(id == socket.id ) 
+			{
+				li.className = 'me'
+			}
+			nameDiv.className = 'name'
+			messageDiv.className = 'message'
+
+			nameDiv.innerText = 'John'
+			messageDiv.innerText = message;
+
+       
+            chat.appendChild(li);
+			li.appendChild(nameDiv)
+			li.appendChild(messageDiv)
+			
+        })
+    </script>
 </body>
 
 </html>
